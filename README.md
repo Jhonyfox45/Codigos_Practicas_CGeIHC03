@@ -2,15 +2,19 @@
 
 # Facultad de Ingeniería
 
+# División de Ingeniería Eléctrica
+
+# Ingeniería en Computación
+
 # Laboratorio de Computación Grafica e Interacción Humano Computadora
 
-Alumno: Amaya Esquivel Jhonatan Emmanuel
+Nombre completo: Amaya Esquivel Jhonatan Emmanuel
 
 No.Cuenta: 319125056
 
-Grup.Lab: 03
+Grupo de Laboratorio: 03
 
-Grup.Teo: 06
+Grupo de Teoría: 06
 
 Semestre 2027-1
 

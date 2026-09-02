@@ -1,2 +1,0 @@
-﻿LINK : warning LNK4098: la biblioteca predeterminada'MSVCRT' entra en conflicto con otras bibliotecas; use la biblioteca /NODEFAULTLIB:biblioteca
-  Prueba_1.vcxproj -> D:\Usuarios\Jhona\Documentos\1 CARRERA INGENIERIA EN COMPUTACION\8vo Semestre\Computación Gráfica e Interacción Humano-Computadora\Laboratorio\P0\x64\Debug\Prueba_1.exe

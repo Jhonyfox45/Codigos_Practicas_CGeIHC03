@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Usuarios\\Jhona\\Documentos\\Carrera_Ing_Computacion\\8vo_Semestre\\CGeIHC\\Lab03\\Codigo_Practicas\\Practica_0\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{FB2ECC09-F6BB-4593-97BF-7B099A7B90FE}|Prueba_1\\Prueba_1.vcxproj|D:\\Usuarios\\Jhona\\Documentos\\Carrera_Ing_Computacion\\8vo_Semestre\\CGeIHC\\Lab03\\Codigo_Practicas\\Practica_0\\Prueba_1\\mainbase.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{FB2ECC09-F6BB-4593-97BF-7B099A7B90FE}|Prueba_1\\Prueba_1.vcxproj|solutionrelative:Prueba_1\\mainbase.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "mainbase.cpp",
+              "DocumentMoniker": "D:\\Usuarios\\Jhona\\Documentos\\Carrera_Ing_Computacion\\8vo_Semestre\\CGeIHC\\Lab03\\Codigo_Practicas\\Practica_0\\Prueba_1\\mainbase.cpp",
+              "RelativeDocumentMoniker": "Prueba_1\\mainbase.cpp",
+              "ToolTip": "D:\\Usuarios\\Jhona\\Documentos\\Carrera_Ing_Computacion\\8vo_Semestre\\CGeIHC\\Lab03\\Codigo_Practicas\\Practica_0\\Prueba_1\\mainbase.cpp",
+              "RelativeToolTip": "Prueba_1\\mainbase.cpp",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAAAsAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-08-29T15:49:33.931Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

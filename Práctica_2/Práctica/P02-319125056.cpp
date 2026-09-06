@@ -36,9 +36,9 @@ static const char* vShaderColor = "shaders/shadercolor.vert";
 static const char* fShaderColor = "shaders/shadercolor.frag";
 //shaders nuevos se crear�an ac�
 
-float angulo = 0.0f;
-
-//color caf� en RGB : 0.478, 0.255, 0.067
+//Vamos a hacer algo aca bien chido con estas variables
+bool mostrarLetras = true; //Bandera de control para letras
+bool espacioPresionado = false; //Bandera para hacer el cambio con la letra espaciadora
 
 //Modificamos la piramide para que tenga base cuadrada
 void CreaPiramide()
@@ -296,215 +296,230 @@ int main()
 		glClearColor(0.95f, 0.52f, 0.0f, 1.0f);//Color del fondo de la ventana en naranja
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Se agrega limpiar el buffer de profundidad
 		
-													
-		//Para las letras hay que usar el PRIMER set de shaders con �ndice 0 en ShaderList 
-		shaderList[0].useShader();
-		uniformModel = shaderList[0].getModelLocation();
-		uniformProjection = shaderList[0].getProjectLocation();
+		//Aca ponemos la linea para detectar el teclado
+		GLFWwindow* ventanaActual = glfwGetCurrentContext(); //Obtenemos la ventana sin romper la clase window
 		
-		//Mandamos a modificar la escala y traslación de nuestras letras
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -4.0f)); //Lo dejamos en el origen pero en el fondo 
-		model = glm::scale(model, glm::vec3(2.4f, 2.4f, 2.4f)); //Escalamiento para que nuestras letras ocupen más pantalla
+		//Logica de detección de la letra espacio
+		if (glfwGetKey(ventanaActual, GLFW_KEY_SPACE) == GLFW_PRESS) {
+			if (!espacioPresionado){ //Mostrar una vez por pulsación
+				mostrarLetras = !mostrarLetras; //Inversión del valor
+				espacioPresionado = true; //Bloqueo hasta soltar la tecla
+			}
+		}
+		else if (glfwGetKey(ventanaActual, GLFW_KEY_SPACE) == GLFW_RELEASE) {
+			espacioPresionado = false; //Desbloquea el boton al soltarlo
+		}
 
-		//Renderizamos nuestras Letras
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));//FALSE ES PARA QUE NO SEA TRANSPUESTA y se env�an al shader como variables de tipo uniform
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshColorList[0]->RenderMeshColor(); //Mandamos a renderizar nuestras letras
-
-		//Para el cubo y la pirámide se usa DEL SEGUNDO SET AL OCTAVO de shaders con índice 1 a 7 en ShaderList
-		shaderList[1].useShader(); //CAMBIAR INDICE
-		uniformModel = shaderList[1].getModelLocation(); //CAMBIAR INDICE
-		uniformProjection = shaderList[1].getProjectLocation(); //CAMBIAMOS EL SHADER PARA EL COLOR INDICES DEL 1 A 7
-		//Inicializar matriz de dimensión 4x4 que servirá como matriz de modelo para almacenar las transformaciones geométricas
-
-		//NOTA:Tuvimos que modificar la variable Z de la traslación ya que ahora si tenemos profundidad TODAS LAS FIGURAS tendran Z= -1.4
-		//Hacemos la piramide Amarilla
-		model = glm::mat4(1.0); //reseteo la matriz de modelo
-		model = glm::translate(model, glm::vec3(-0.65f, 0.06f, -1.4f)); //Datos de una traslación 
-		model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f)); //rotación de 180 grados en el eje Z
-		model = glm::scale(model, glm::vec3(0.08f, 0.06f, 0.08f)); //Escalamiento en 0.08
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));//FALSE ES PARA QUE NO SEA TRANSPUESTA
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[0]->RenderMesh(); //Indice 0 ->Piramide e Indice 1 ->Cubo
-
-		//Hacemos la piramide roja
-		shaderList[2].useShader(); //CAMBIAR INDICE
-		uniformModel = shaderList[2].getModelLocation(); 
-		uniformProjection = shaderList[2].getProjectLocation(); 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-0.65f, 0.0f, -1.4f));
-		model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(0.08f, 0.06f, 0.08f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[0]->RenderMesh();
-
-		//Hacemos la piramide verde
-		shaderList[3].useShader(); 
-		uniformModel = shaderList[3].getModelLocation();
-		uniformProjection = shaderList[3].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-0.65f, -0.06f, -1.4f));
-		model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(0.08f, 0.06f, 0.08f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[0]->RenderMesh();
+		//Ahora solo metemos todo el codigo de las letras en un if, y en el else el de las figuras 3D y LISTO!!
+		if (!mostrarLetras) {
+			//Para las letras hay que usar el PRIMER set de shaders con �ndice 0 en ShaderList 
+			shaderList[0].useShader();
+			uniformModel = shaderList[0].getModelLocation();
+			uniformProjection = shaderList[0].getProjectLocation();
 		
-		//Hacemos el 1er cubo cafe que será como un rectangulo
-		shaderList[5].useShader(); 
-		uniformModel = shaderList[5].getModelLocation();
-		uniformProjection = shaderList[5].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-0.73f,-0.009f, -1.4f));
-		model = glm::scale(model, glm::vec3(0.03f, 0.215f, 0.03f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[1]->RenderMesh();
+			//Mandamos a modificar la escala y traslación de nuestras letras
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -4.0f)); //Lo dejamos en el origen pero en el fondo 
+			model = glm::scale(model, glm::vec3(2.4f, 2.4f, 2.4f)); //Escalamiento para que nuestras letras ocupen más pantalla
 
-		//Hacemos el 2o cubo cafe que será como un rectangulo
-		shaderList[5].useShader(); 
-		uniformModel = shaderList[5].getModelLocation();
-		uniformProjection = shaderList[5].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-0.57f,-0.009f, -1.4f));
-		model = glm::scale(model, glm::vec3(0.03f, 0.215f, 0.03f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[1]->RenderMesh();
+			//Renderizamos nuestras Letras
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));//FALSE ES PARA QUE NO SEA TRANSPUESTA y se env�an al shader como variables de tipo uniform
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshColorList[0]->RenderMeshColor(); //Mandamos a renderizar nuestras letras
+		}else {
+			//Para el cubo y la pirámide se usa DEL SEGUNDO SET AL OCTAVO de shaders con índice 1 a 7 en ShaderList
+			shaderList[1].useShader(); //CAMBIAR INDICE
+			uniformModel = shaderList[1].getModelLocation(); //CAMBIAR INDICE
+			uniformProjection = shaderList[1].getProjectLocation(); //CAMBIAMOS EL SHADER PARA EL COLOR INDICES DEL 1 A 7
+			//Inicializar matriz de dimensión 4x4 que servirá como matriz de modelo para almacenar las transformaciones geométricas
+
+			//NOTA:Tuvimos que modificar la variable Z de la traslación ya que ahora si tenemos profundidad TODAS LAS FIGURAS tendran Z= -1.4
+			//Hacemos la piramide Amarilla
+			model = glm::mat4(1.0); //reseteo la matriz de modelo
+			model = glm::translate(model, glm::vec3(-0.65f, 0.06f, -1.4f)); //Datos de una traslación 
+			model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f)); //rotación de 180 grados en el eje Z
+			model = glm::scale(model, glm::vec3(0.08f, 0.06f, 0.08f)); //Escalamiento en 0.08
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));//FALSE ES PARA QUE NO SEA TRANSPUESTA
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[0]->RenderMesh(); //Indice 0 ->Piramide e Indice 1 ->Cubo
+
+			//Hacemos la piramide roja
+			shaderList[2].useShader(); //CAMBIAR INDICE
+			uniformModel = shaderList[2].getModelLocation(); 
+			uniformProjection = shaderList[2].getProjectLocation(); 
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(-0.65f, 0.0f, -1.4f));
+			model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::scale(model, glm::vec3(0.08f, 0.06f, 0.08f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[0]->RenderMesh();
+
+			//Hacemos la piramide verde
+			shaderList[3].useShader(); 
+			uniformModel = shaderList[3].getModelLocation();
+			uniformProjection = shaderList[3].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(-0.65f, -0.06f, -1.4f));
+			model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::scale(model, glm::vec3(0.08f, 0.06f, 0.08f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[0]->RenderMesh();
 		
-		//Hacemos el cubo azul "Grande" Rotado 45 grados en Z
-		shaderList[6].useShader();
-		uniformModel = shaderList[6].getModelLocation();
-		uniformProjection = shaderList[6].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, -0.02f, -1.4f));
-		model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(0.12f, 0.12f, 0.12f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[1]->RenderMesh();
+			//Hacemos el 1er cubo cafe que será como un rectangulo
+			shaderList[5].useShader(); 
+			uniformModel = shaderList[5].getModelLocation();
+			uniformProjection = shaderList[5].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(-0.73f,-0.009f, -1.4f));
+			model = glm::scale(model, glm::vec3(0.03f, 0.215f, 0.03f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[1]->RenderMesh();
 
-		//Hacemos el cubo cafe "pequeño" Rotado 45 grados en Z
-		shaderList[5].useShader();
-		uniformModel = shaderList[5].getModelLocation();
-		uniformProjection = shaderList[5].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, -0.02f, -1.35f));
-		model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(0.06f, 0.06f, 0.06f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[1]->RenderMesh();
-
-		//Hacemos la piramide amarilla "chata"
-		shaderList[1].useShader();
-		uniformModel = shaderList[1].getModelLocation();
-		uniformProjection = shaderList[1].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-0.04f, 0.028f, -1.4f));
-		model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f)); //rotación de 45 grados en el eje Z
-		model = glm::scale(model, glm::vec3(0.128f, 0.065f, 0.128f)); //Escalamiento para formar un triangulo más "chato"
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[0]->RenderMesh();
-
-		//Hacemos la piramide roja "chata"
-		shaderList[2].useShader();
-		uniformModel = shaderList[2].getModelLocation();
-		uniformProjection = shaderList[2].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.04f, 0.028f, -1.4f));
-		model = glm::rotate(model, 315 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(0.128f, 0.065f, 0.128f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[0]->RenderMesh();
-
-		//Hacemos la piramide Magenta "chata"
-		shaderList[4].useShader();
-		uniformModel = shaderList[4].getModelLocation();
-		uniformProjection = shaderList[4].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-0.04f, -0.067f, -1.4f));
-		model = glm::rotate(model, 135 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(0.128f, 0.065f, 0.128f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[0]->RenderMesh();
-
-		//Hacemos la piramide Verde "chata"
-		shaderList[3].useShader();
-		uniformModel = shaderList[3].getModelLocation();
-		uniformProjection = shaderList[3].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.04f, -0.067f, -1.4f));
-		model = glm::rotate(model, 225 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(0.128f, 0.065f, 0.128f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[0]->RenderMesh();
-
-		//Piramide equilatera amarilla
-		shaderList[1].useShader();
-		uniformModel = shaderList[1].getModelLocation();
-		uniformProjection = shaderList[1].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.65f, -0.035f, -1.4f));
-		model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(0.09f, 0.08f, 0.09f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[0]->RenderMesh();
-
-		//Piramide equilatera roja
-		shaderList[2].useShader();
-		uniformModel = shaderList[2].getModelLocation();
-		uniformProjection = shaderList[2].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.71f, -0.11f, -1.4f));
-		model = glm::scale(model, glm::vec3(0.09f, 0.08f, 0.09f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[0]->RenderMesh();
-
-		//Piramide equilatera verde
-		shaderList[3].useShader();
-		uniformModel = shaderList[3].getModelLocation();
-		uniformProjection = shaderList[3].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.59f, -0.11f, -1.4f));
-		model = glm::scale(model, glm::vec3(0.09f, 0.08f, 0.09f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[0]->RenderMesh();
-
-		//Piramide equilatera magenta
-		shaderList[4].useShader();
-		uniformModel = shaderList[4].getModelLocation();
-		uniformProjection = shaderList[4].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.65f, -0.035f, -1.4f));
-		model = glm::scale(model, glm::vec3(0.09f, 0.08f, 0.09f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[0]->RenderMesh();
-
-		//Por ultimo el cuadrado negro que parece un rectangulo muy largo
-		shaderList[7].useShader();
-		uniformModel = shaderList[7].getModelLocation();
-		uniformProjection = shaderList[7].getProjectLocation();
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, -0.128f, -1.4f));
-		model = glm::scale(model, glm::vec3(1.7f, 0.03f, 0.03f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		meshList[1]->RenderMesh();
+			//Hacemos el 2o cubo cafe que será como un rectangulo
+			shaderList[5].useShader(); 
+			uniformModel = shaderList[5].getModelLocation();
+			uniformProjection = shaderList[5].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(-0.57f,-0.009f, -1.4f));
+			model = glm::scale(model, glm::vec3(0.03f, 0.215f, 0.03f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[1]->RenderMesh();
 		
+			//Hacemos el cubo azul "Grande" Rotado 45 grados en Z
+			shaderList[6].useShader();
+			uniformModel = shaderList[6].getModelLocation();
+			uniformProjection = shaderList[6].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(0.0f, -0.02f, -1.4f));
+			model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::scale(model, glm::vec3(0.12f, 0.12f, 0.12f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[1]->RenderMesh();
+
+			//Hacemos el cubo cafe "pequeño" Rotado 45 grados en Z
+			shaderList[5].useShader();
+			uniformModel = shaderList[5].getModelLocation();
+			uniformProjection = shaderList[5].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(0.0f, -0.02f, -1.35f));
+			model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::scale(model, glm::vec3(0.06f, 0.06f, 0.06f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[1]->RenderMesh();
+
+			//Hacemos la piramide amarilla "chata"
+			shaderList[1].useShader();
+			uniformModel = shaderList[1].getModelLocation();
+			uniformProjection = shaderList[1].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(-0.04f, 0.028f, -1.4f));
+			model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f)); //rotación de 45 grados en el eje Z
+			model = glm::scale(model, glm::vec3(0.128f, 0.065f, 0.128f)); //Escalamiento para formar un triangulo más "chato"
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[0]->RenderMesh();
+
+			//Hacemos la piramide roja "chata"
+			shaderList[2].useShader();
+			uniformModel = shaderList[2].getModelLocation();
+			uniformProjection = shaderList[2].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(0.04f, 0.028f, -1.4f));
+			model = glm::rotate(model, 315 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::scale(model, glm::vec3(0.128f, 0.065f, 0.128f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[0]->RenderMesh();
+
+			//Hacemos la piramide Magenta "chata"
+			shaderList[4].useShader();
+			uniformModel = shaderList[4].getModelLocation();
+			uniformProjection = shaderList[4].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(-0.04f, -0.067f, -1.4f));
+			model = glm::rotate(model, 135 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::scale(model, glm::vec3(0.128f, 0.065f, 0.128f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[0]->RenderMesh();
+
+			//Hacemos la piramide Verde "chata"
+			shaderList[3].useShader();
+			uniformModel = shaderList[3].getModelLocation();
+			uniformProjection = shaderList[3].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(0.04f, -0.067f, -1.4f));
+			model = glm::rotate(model, 225 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::scale(model, glm::vec3(0.128f, 0.065f, 0.128f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[0]->RenderMesh();
+
+			//Piramide equilatera amarilla
+			shaderList[1].useShader();
+			uniformModel = shaderList[1].getModelLocation();
+			uniformProjection = shaderList[1].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(0.65f, -0.035f, -1.4f));
+			model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::scale(model, glm::vec3(0.09f, 0.08f, 0.09f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[0]->RenderMesh();
+
+			//Piramide equilatera roja
+			shaderList[2].useShader();
+			uniformModel = shaderList[2].getModelLocation();
+			uniformProjection = shaderList[2].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(0.71f, -0.11f, -1.4f));
+			model = glm::scale(model, glm::vec3(0.09f, 0.08f, 0.09f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[0]->RenderMesh();
+
+			//Piramide equilatera verde
+			shaderList[3].useShader();
+			uniformModel = shaderList[3].getModelLocation();
+			uniformProjection = shaderList[3].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(0.59f, -0.11f, -1.4f));
+			model = glm::scale(model, glm::vec3(0.09f, 0.08f, 0.09f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[0]->RenderMesh();
+
+			//Piramide equilatera magenta
+			shaderList[4].useShader();
+			uniformModel = shaderList[4].getModelLocation();
+			uniformProjection = shaderList[4].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(0.65f, -0.035f, -1.4f));
+			model = glm::scale(model, glm::vec3(0.09f, 0.08f, 0.09f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[0]->RenderMesh();
+
+			//Por ultimo el cuadrado negro que parece un rectangulo muy largo
+			shaderList[7].useShader();
+			uniformModel = shaderList[7].getModelLocation();
+			uniformProjection = shaderList[7].getProjectLocation();
+			model = glm::mat4(1.0);
+			model = glm::translate(model, glm::vec3(0.0f, -0.128f, -1.4f));
+			model = glm::scale(model, glm::vec3(1.7f, 0.03f, 0.03f));
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+			meshList[1]->RenderMesh();
+		}
+		//Con esto podemos cambiar de letras a figuras 3D solo con el espacio
 		glUseProgram(0);
 		mainWindow.swapBuffers();
-
 	}
 	return 0;
 }

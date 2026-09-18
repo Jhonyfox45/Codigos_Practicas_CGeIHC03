@@ -506,9 +506,19 @@ int main()
 		color = glm::vec3(0.0f, 0.0f, 1.0f);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color)); 
 		sp.render();
-		//BARRA PARA LA LLANTA FRONTAL (CERCA)
+		//BARRA PARA LA LLANTA FRONTAL PT1 (CERCA)
 		model = modelaux;
-		model = glm::translate(model, glm::vec3(-2.0f, -0.75f, 0.0f));
+		model = glm::translate(model, glm::vec3(-0.75f, 0.0f, 0.0f));
+		modelaux = model;
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); 
+		model = glm::scale(model, glm::vec3(0.35f, 1.5f, 0.35f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = glm::vec3(0.62f, 0.65f, 0.68f); //Usamos el color gris de la otra vez
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color)); //para cambiar el color del objetos
+		meshList[2]->RenderMeshGeometry();
+		//BARRA PARA LA LLANTA FRONTAL PT2 (CERCA)
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(-2.5f, -0.75f, 0.0f));
 		model = glm::rotate(model, glm::radians(112.5f), glm::vec3(0.0f, 0.0f, 1.0f));
 		modelaux = model; //Guardamos la rotación
 		model = glm::scale(model, glm::vec3(0.35f, 4.0f, 0.35f));
@@ -578,9 +588,19 @@ int main()
 		color = glm::vec3(0.0f, 0.0f, 1.0f);
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		sp.render();
-		//BARRA PARA LA LLANTA FRONTAL (LEJOS)
+		//BARRA PARA LA LLANTA FRONTAL PT1 (LEJOS)
 		model = modelaux;
-		model = glm::translate(model, glm::vec3(-2.0f, -0.75f, 0.0f));
+		model = glm::translate(model, glm::vec3(-0.75f, 0.0f, 0.0f));
+		modelaux = model;
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(0.35f, 1.5f, 0.35f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		color = glm::vec3(0.62f, 0.65f, 0.68f); //Usamos el color gris de la otra vez
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color)); //para cambiar el color del objetos
+		meshList[2]->RenderMeshGeometry();
+		//BARRA PARA LA LLANTA FRONTAL PT2 (LEJOS)
+		model = modelaux;
+		model = glm::translate(model, glm::vec3(-2.5f, -0.75f, 0.0f));
 		model = glm::rotate(model, glm::radians(112.5f), glm::vec3(0.0f, 0.0f, 1.0f));
 		modelaux = model; //Guardamos la rotación
 		model = glm::scale(model, glm::vec3(0.35f, 4.0f, 0.35f));
